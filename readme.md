@@ -80,14 +80,14 @@ package main
 import (
 	"log"
 
-	"example.com/example/example-templates/src/controller/templates"
-	"example.com/example/example-templates/src/controller/templates/controller"
-	"example.com/example/example-templates/src/controller/templates/state"
+	"example.com/example/example-sc/src/controller/myctl"
+	"example.com/example/example-sc/src/controller/myctl/controller"
+	"example.com/example/example-sc/src/controller/myctl/state"
 )
 
 func main() {
 
-	ctl := templates.InitCtl(&state.Ctx{}, controller.ControllerSettingsInput{})
+	ctl := myctl.InitCtl(&state.Ctx{}, controller.ControllerSettingsInput{})
 	reconciler := controller.InitReconciler(ctl, controller.ReconcilerInput{})
 
 	err := reconciler.Reconcile()
@@ -95,7 +95,6 @@ func main() {
 		log.Fatal(err)
 	}
 }
-
 ```
 10. Import the base templates `make import`
 11. Generate the state machine by running `make sc`
