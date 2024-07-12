@@ -3,7 +3,7 @@
 1. Create sc folder `mkdir ./sc`
 2. Create `sc.yaml' with the following content
 ```yaml
-module: "example.com/example/example-templates"
+module: "example.com/example/example-sc"
 language: "go"
 EnableGeneratedFilePrefix: true
 importPathSeparator: "/"
@@ -24,10 +24,10 @@ templates:
 @startuml Demo
 
 [*] --> DemoState: [ CheckAlwaysTrue ]
-[*] -[bold]-> [*]: / Print(The guards needs to be implemented)
+[*] -[bold]-> [*]: / Print(The guard needs to be implemented)
 
 DemoState: do / AddMsg(Hello)
-DemoState: do / AddMsg(World1)
+DemoState: do / AddMsg(World)
 DemoState: do / AddMsg(!)
 DemoState --> BurnState: [ CheckAlwaysTrue ] / Print(Go to BurnState)
 DemoState -[bold]-> [*]
@@ -43,7 +43,7 @@ sc=~/go/bin/sc
 
 .PHONY: sc
 sc:
-	$(sc) gen --root $(PWD) --name templates
+	$(sc) gen --root $(PWD) --name myctl
 
 .PHONY: import
 import:
