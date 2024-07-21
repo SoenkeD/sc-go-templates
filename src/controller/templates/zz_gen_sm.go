@@ -6,25 +6,26 @@ import (
 	. "github.com/SoenkeD/sc-go-templates/src/controller/templates/guards"
 )
 
-const StartStateKey = "StartState"
+const BurnStateStateKey = "BurnStateState"
 
 func init() {
-	AllStates[StartStateKey] = State{
-		Actions: []StateAction{},
-		Transitions: []Transition{
+	AllStates[BurnStateStateKey] = State{
+		Actions: []StateAction{
 			{
-				Type:     TransitionTypeNormal,
-				Next:     DemoStateStateKey,
-				Guard:    CheckAlwaysTrueGuardKey,
-				Negation: false,
-			},
-			{
-				Type:   TransitionTypeHappy,
-				Next:   EndStateKey,
 				Action: PrintActionKey,
 				ActionArgs: []string{
-					"The guards needs to be implemented",
+					"Got messages",
 				},
+			},
+			{
+				Action:     PrintMsgsActionKey,
+				ActionArgs: []string{},
+			},
+		},
+		Transitions: []Transition{
+			{
+				Type:     TransitionTypeHappy,
+				Next:     EndStateKey,
 				Negation: false,
 			},
 		},
@@ -45,7 +46,7 @@ func init() {
 			{
 				Action: AddMsgActionKey,
 				ActionArgs: []string{
-					"World1",
+					"World",
 				},
 			},
 			{
@@ -84,26 +85,25 @@ func init() {
 	}
 }
 
-const BurnStateStateKey = "BurnStateState"
+const StartStateKey = "StartState"
 
 func init() {
-	AllStates[BurnStateStateKey] = State{
-		Actions: []StateAction{
-			{
-				Action: PrintActionKey,
-				ActionArgs: []string{
-					"Got messages",
-				},
-			},
-			{
-				Action:     PrintMsgsActionKey,
-				ActionArgs: []string{},
-			},
-		},
+	AllStates[StartStateKey] = State{
+		Actions: []StateAction{},
 		Transitions: []Transition{
 			{
-				Type:     TransitionTypeHappy,
-				Next:     EndStateKey,
+				Type:     TransitionTypeNormal,
+				Next:     DemoStateStateKey,
+				Guard:    CheckAlwaysTrueGuardKey,
+				Negation: false,
+			},
+			{
+				Type:   TransitionTypeHappy,
+				Next:   EndStateKey,
+				Action: PrintActionKey,
+				ActionArgs: []string{
+					"The guards needs to be implemented",
+				},
 				Negation: false,
 			},
 		},
