@@ -6,6 +6,7 @@ after_structure_creation:
 - "go get github.com/onsi/ginkgo/v2"
 after_all:
 - "make sc"
+- "go mod tidy"
 files:
 - src: "main.tpl"
   target: "main.go"

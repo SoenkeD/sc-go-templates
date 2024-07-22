@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"{{ .Cfg.Module }}{{ .Cfg.CtlDir }}/{{ .InitCtl }}"
-	"{{ .Cfg.Module }}{{ .Cfg.CtlDir }}/{{ .InitCtl }}/controller"
-	"{{ .Cfg.Module }}{{ .Cfg.CtlDir }}/{{ .InitCtl }}/state"
+	"{{ .Cfg.Module }}/{{ .Cfg.CtlDir }}/{{ .InitCtl }}"
+	"{{ .Cfg.Module }}/{{ .Cfg.CtlDir }}/{{ .InitCtl }}/controller"
+	"{{ .Cfg.Module }}/{{ .Cfg.CtlDir }}/{{ .InitCtl }}/state"
 )
 
 func main() {

@@ -12,7 +12,7 @@ test: vet fmt
 
 .PHONY: run
 run:
-	go run src/main.go
+	go run main.go
 
 #############################
 #############################
