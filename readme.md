@@ -19,6 +19,7 @@ sc init --setup https://github.com/SoenkeD/sc-go-templates/main/sc/setup \
 `--name` is the name of the first controller to create \
 `--root` is the desired root of the project (the directory should not exist) \
 `--module` is the name of the desired Golang module e.g. `github.com/SoenkeD/sc`
+`--container` can be used to enable podman (defaults to docker) 
 
 3. Navigate into the project
 4. Modify the `Print` action to print the first argument
