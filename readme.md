@@ -11,7 +11,7 @@ Ensure `~/go/bin` is in your path.
 1. Navigate to the directory where the project should be created
 2. Set the desired parameters and execute the command below 
 ```bash
-sc init --setup https://github.com/SoenkeD/sc-go-templates/main/sc/setup \ 
+sc init --setup https://github.com/SoenkeD/sc-go-templates/main/sc/setup \
 	--name myctl \
 	--root $PWD/demo  \
 	--module demo
