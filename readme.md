@@ -1,4 +1,30 @@
-## Setup a new Golang sc project
+# SC Golang Templates
+This repository contains the templates to use the sc CLI tool 
+to generate Golang state machines.
+
+## Install sc CLI
+`go install github.com/SoenkeD/sc` \
+
+Ensure `~/go/bin` is in your path. 
+
+## Setup
+1. Navigate to the directory where the project should be created
+2. Set the desired parameters and execute the command below 
+```bash
+sc init --setup https://github.com/SoenkeD/sc-go-templates/main/sc/setup \ 
+	--name myctl \
+	--root $PWD/demo  \
+	--module demo
+```
+`--name` is the name of the first controller to create \
+`--root` is the desired root of the project (the directory should not exist) \
+`--module` is the name of the desired Golang module e.g. `github.com/SoenkeD/sc`
+
+3. Navigate into the project
+4. Modify the `Print` action to print the first argument
+5. Run `make run` to see the first running state machine
+
+## Setup a new Golang sc project (manually)
 
 1. Create sc folder `mkdir ./sc`
 2. Create `sc.yaml' with the following content
