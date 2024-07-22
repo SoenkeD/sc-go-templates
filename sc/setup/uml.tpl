@@ -1,4 +1,4 @@
-@startuml {{ .InitCtl }}
+@startuml {{ Cfg.InitCtl }}
 
 [*] --> DemoState: [ CheckAlwaysTrue ]
 [*] -[bold]-> [*]: / Print(The guard needs to be implemented)

@@ -1,12 +1,12 @@
-scYaml: "sc.yaml"
-DefaultPlantUml: "uml.tpl"      
-AfterStructureCreation:
-- "go mod init {{ .Module }}"
+sc_yaml: "sc.yaml"
+default_plant_uml: "uml.tpl"      
+after_structure_creation:
+- "go mod init {{ Cfg.Module }}"
 - "go get github.com/onsi/gomega/..."
 - "go get github.com/onsi/ginkgo/v2"
-AfterAll:
+after_all:
 - "make sc"
-Files:
+files:
 - src: "main.tpl"
   target: "main.go"
 - src: "Makefile.tpl"
