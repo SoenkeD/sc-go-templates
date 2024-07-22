@@ -1,7 +1,7 @@
 sc_yaml: "sc.yaml"
 default_plant_uml: "uml.tpl"      
 after_structure_creation:
-- "go mod init {{ Cfg.Module }}"
+- "go mod init {{ .Cfg.Module }}"
 - "go get github.com/onsi/gomega/..."
 - "go get github.com/onsi/ginkgo/v2"
 after_all:
