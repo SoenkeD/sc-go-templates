@@ -3,7 +3,7 @@ This repository contains the templates to use the sc CLI tool
 to generate Golang state machines.
 
 ## Install sc CLI
-`go install github.com/SoenkeD/sc` \
+`go install github.com/SoenkeD/sc`
 
 Ensure `~/go/bin` is in your path. 
 
