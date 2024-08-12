@@ -33,9 +33,9 @@ func (ctl *Ctl) findErrorHandling() error {
 
 	// find state which caused error
 	var errorState string
-	for idx := len(ctl.state.Route); idx > 0; idx-- {
+	for idx := len(ctl.state.Route) - 1; idx >= 0; idx-- {
 
-		if !strings.HasSuffix(ctl.state.Route[idx-1], "State") {
+		if !strings.HasSuffix(ctl.state.Route[idx], "State") {
 			continue
 		}
 
@@ -65,7 +65,7 @@ func (ctl *Ctl) findErrorHandling() error {
 	}
 
 	// check if compound states have error handling
-	for idx := len(ctl.stateStack); idx > 0; idx++ {
+	for idx := len(ctl.stateStack); idx > 0; idx-- {
 
 		startStateName := ctl.stateStack[idx-1]
 		endStateName := strings.ReplaceAll(startStateName, KeyStartState, KeyEndState)
@@ -157,8 +157,8 @@ func (ctl *Ctl) doTransition(transition Transition) (executed bool, err *StateEr
 		if xor(!guard.Do(ctl.state, transition.GuardArgs...), transition.Negation) {
 			return false, nil
 		}
-		ctl.state.Route = append(ctl.state.Route, transition.Guard)
 	}
+	ctl.state.Route = append(ctl.state.Route, ctl.nextState+"/"+transition.GetId())
 
 	if transition.Action != "" {
 		err := ctl.doAction(transition.Action, transition.ActionArgs)
@@ -239,6 +239,10 @@ func (ctl *Ctl) doNextState() *StateErr {
 	}
 
 	for _, transition := range state.Transitions {
+
+		if transition.Type == TransitionTypeError {
+			continue
+		}
 
 		executed, stateErr := ctl.doTransition(transition)
 		if !executed {

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	. "{{ .ImportRoot }}/state"
@@ -41,6 +42,27 @@ type Transition struct {
 	Next       string
 	Negation   bool
 	Type       TransitionType
+}
+
+func (tr *Transition) GetId() string {
+
+	negationStr := "false"
+	if tr.Negation {
+		negationStr = "true"
+	}
+
+	return strings.Join(
+		[]string{
+			strings.TrimSuffix(tr.Action, "Action"),
+			strings.Join(tr.ActionArgs, ","),
+			strings.TrimSuffix(tr.Guard, "Guard"),
+			strings.Join(tr.GuardArgs, ","),
+			string(tr.Type),
+			strings.ReplaceAll(strings.TrimSuffix(tr.Next, "State"), "/", "\\"),
+			negationStr,
+		},
+		"/",
+	)
 }
 
 type StateAction struct {

@@ -1,15 +1,15 @@
 @startuml {{ .InitCtl }}
 
-[*] --> DemoState: [ CheckAlwaysTrue ]
+[*] --> Demoing: [ CheckAlwaysTrue ]
 [*] -[bold]-> [*]: / Print(The guard needs to be implemented)
 
-DemoState: do / AddMsg(Hello)
-DemoState: do / AddMsg(World)
-DemoState: do / AddMsg(!)
-DemoState --> BurnState: [ CheckAlwaysTrue ] / Print(Go to BurnState)
-DemoState -[bold]-> [*]
+Demoing: do / AddMsg(Hello)
+Demoing: do / AddMsg(World)
+Demoing: do / AddMsg(!)
+Demoing --> Burning: [ CheckAlwaysTrue ] / Print(Go to Burning)
+Demoing -[bold]-> [*]
 
 
-BurnState: do / Print(Got messages)
-BurnState: do / PrintMsgs
-BurnState -[bold]-> [*]
+Burning: do / Print(Got messages)
+Burning: do / PrintMsgs
+Burning -[bold]-> [*]
