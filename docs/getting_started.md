@@ -85,7 +85,7 @@ path:
 You should see `myctl.route.plantuml` in the repository's root. 
 Render it with PlantUML to visualize the path.
 
-![Path Visualization](imgs/getting_started_after_checkalwaystrue.png)
+![Path Visualization](imgs/getting_started_checkalwaystrue.png)
 
 ### Edit Guard
 
