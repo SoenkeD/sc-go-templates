@@ -145,9 +145,14 @@ After executing `make run`, the previous output repeats.
 Execute `make sc` and then `make run` to see updated messages.
 
 ### To Be Done
-
 - Create another controller
 - Customize the controller
 - Customize the reconciler
 - Error handling
+- Panic Handling
 - Export to templates
+- Setup new imports
+- Implement Invariant
+- Use Mock-Tests
+- Unit Tests
+- Integration Tests
