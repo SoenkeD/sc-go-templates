@@ -60,7 +60,7 @@ PLANTUML_CONTAINER_NAME=sc-plantuml-server
 
 .PHONY: plantuml-gen
 plantuml-gen: plantuml-start $(patsubst $(CTL_DIR)/%.plantuml,$(CTL_DIR)/%.svg,$(wildcard $(CTL_DIR)/*/*.plantuml))
-$(CTL_DIR)/%.svg: src/controller/%.plantuml
+$(CTL_DIR)/%.svg: $(CTL_DIR)/%.plantuml
 	curl -X POST \
 		-H "Content-Type: text/plain" \
 		--data-binary "@$<" \
