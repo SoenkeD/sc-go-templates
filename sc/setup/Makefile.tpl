@@ -37,7 +37,7 @@ sc=~/go/bin/sc
 .PHONY: sc-gen
 sc-gen:
 	$(foreach dir,$(wildcard $(CTL_DIR)/*), \
-		sc gen --root $(PWD) --name $(notdir $(dir));)
+		$(if $(wildcard $(dir)/*), sc gen --root $(PWD) --name $(notdir $(dir));))
 
 .PHONY: sc
 sc: plantuml-gen sc-gen
