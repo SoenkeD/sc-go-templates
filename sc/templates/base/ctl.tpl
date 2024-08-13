@@ -141,6 +141,7 @@ func (ctl *Ctl) Run() (res CtlRes, err *CtlErr) {
 	ctl.state.Route = append(ctl.state.Route, KeyEndState)
 	res = CtlRes{
 		Route: ctl.state.Route,
+		State: *ctl.state,
 	}
 
 	return

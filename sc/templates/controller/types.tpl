@@ -94,6 +94,7 @@ type CtlErr struct {
 
 type CtlRes struct {
 	Route []string
+	State ExtendedState
 }
 
 type ReconcilerInput struct {

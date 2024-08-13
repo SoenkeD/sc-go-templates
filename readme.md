@@ -8,6 +8,7 @@ to generate Golang state machines.
 Ensure `~/go/bin` is in your path. 
 
 ## Setup
+
 <div style="border-left: 5px solid #007bff; padding: 10px; margin: 20px 0;">
     <strong style="color: #007bff;">ℹ️ Requirements</strong>
     <p style="margin: 5px 0 0 0;">
@@ -18,6 +19,8 @@ Ensure `~/go/bin` is in your path.
     </p>
 </div>
 
+### Setup a new project
+
 1. Navigate to the directory where the project should be created in
 2. Set the desired parameters and execute the command below 
 ```bash
@@ -26,10 +29,8 @@ sc init --setup https://github.com/SoenkeD/sc-go-templates/main/sc/setup \
 	--root $PWD/demo  \
 	--module demo
 ```
-`--name` is the name of the first controller to create \
-`--root` is the desired root of the project (the directory should not exist) \
-`--module` is the name of the desired Golang module e.g. `github.com/SoenkeD/sc`
-`--container` can be used to enable podman (defaults to docker) 
+See further information for the command
+[here](https://github.com/SoenkeD/sc/blob/main/docs/features.md) 
 
 3. Navigate into the project
 4. Modify the `Print` action to print the first argument
@@ -39,3 +40,41 @@ sc init --setup https://github.com/SoenkeD/sc-go-templates/main/sc/setup \
 To get started [read the guide](docs/getting_started.md) which
 goes through the features and intended usage of this tool
 on an example.
+
+### Add to existing code
+1. Navigate to the go root directory in your project (where `go.mod`is located)
+2. Set the desired parameters and execute the command below 
+```bash
+sc init --setup https://github.com/SoenkeD/sc-go-templates/main/sc/add \
+	--name myctl \
+	--root $PWD/demo  \
+	--module demo \
+    --ctl src/controller
+```
+
+Change `--ctl` to the directory the state machine code should be located.
+See further information for the command
+[here](https://github.com/SoenkeD/sc/blob/main/docs/features.md) 
+
+3. Consider adding the [Makefile](sc/setup//Makefile.tpl). 
+Then run `make sc` to generate the code. 
+
+4. To use the generated code access it e.g. by
+```golang
+ctl := sensors.InitCtl(
+    &state.Ctx{},
+    controller.ControllerSettingsInput{
+        AfterInit: &controller.DefaultAfterInitHandler{
+            State: state.ExtendedState{
+                Hello: "world",
+            },
+        },
+    },
+)
+
+res, err := ctl.Run()
+if err != nil {
+    log.Println(err.PanicErr, err.StateErr)
+    return nil, fmt.Errorf("error")
+}
+```
