@@ -137,6 +137,18 @@ func (rec *DefaultAfterReconcileHandler) React(res CtlRes) (next bool) {
 	return
 }
 
+type AfterInitHandler interface {
+	React() *ExtendedState
+}
+
+type DefaultAfterInitHandler struct {
+	State ExtendedState
+}
+
+func (rec *DefaultAfterInitHandler) React() *ExtendedState {
+	return &rec.State
+}
+
 type AfterActionHandler interface {
 	React(state ExtendedState) (next bool)
 }
@@ -160,16 +172,24 @@ func (rec *DefaultAfterStateHandler) React(state ExtendedState) (next bool) {
 }
 
 type ControllerSettingsInput struct {
+	AfterInit   AfterInitHandler
 	AfterAction AfterActionHandler
 	AfterState  AfterStateHandler
 }
 
 type ControllerSettings struct {
+	AfterInit   AfterInitHandler
 	AfterAction AfterActionHandler
 	AfterState  AfterActionHandler
 }
 
 func ControllerSettingsFromInput(input ControllerSettingsInput) (set ControllerSettings) {
+
+	if input.AfterInit != nil {
+		set.AfterInit = input.AfterInit
+	} else {
+		set.AfterInit = &DefaultAfterInitHandler{}
+	}
 
 	if input.AfterAction != nil {
 		set.AfterAction = input.AfterAction

@@ -24,7 +24,7 @@ type Ctl struct {
 
 func (ctl *Ctl) init() {
 	ctl.nextState = KeyStartState
-	ctl.state = new(ExtendedState)
+	ctl.state = ctl.Settings.AfterInit.React()
 	ctl.stateStack = []string{}
 	ctl.panic = nil
 }
