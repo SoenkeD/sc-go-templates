@@ -19,6 +19,11 @@ Ensure `~/go/bin` is in your path.
     </p>
 </div>
 
+## Getting started
+To get started [read the guide](docs/getting_started.md) which
+goes through the features and intended usage of this tool
+on an example.
+
 ### Setup a new project
 
 1. Navigate to the directory where the project should be created in
@@ -36,10 +41,7 @@ See further information for the command
 4. Modify the `Print` action to print the first argument
 5. Run `make run` to see the first running state machine
 
-## Getting started
-To get started [read the guide](docs/getting_started.md) which
-goes through the features and intended usage of this tool
-on an example.
+
 
 ### Add to existing code
 <div style="border-left: 5px solid #007bff; padding: 10px; margin: 20px 0;">
