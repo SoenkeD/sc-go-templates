@@ -42,13 +42,20 @@ goes through the features and intended usage of this tool
 on an example.
 
 ### Add to existing code
-1. Navigate to the go root directory in your project (where `go.mod`is located)
+<div style="border-left: 5px solid #007bff; padding: 10px; margin: 20px 0;">
+    <strong style="color: #007bff;">
+    ℹ️ The directory "{ROOT}/sc" is required to not exist
+    </strong>
+</div>
+
+1. Navigate to the go root directory in your project 
+(where `go.mod` is located)
 2. Set the desired parameters and execute the command below 
 ```bash
 sc init --setup https://github.com/SoenkeD/sc-go-templates/main/sc/add \
 	--name myctl \
 	--root $PWD/demo  \
-	--module demo \
+	--module demo  \
     --ctl src/controller
 ```
 
@@ -61,20 +68,35 @@ Then run `make sc` to generate the code.
 
 4. To use the generated code access it e.g. by
 ```golang
-ctl := sensors.InitCtl(
-    &state.Ctx{},
-    controller.ControllerSettingsInput{
-        AfterInit: &controller.DefaultAfterInitHandler{
-            State: state.ExtendedState{
-                Hello: "world",
-            },
-        },
-    },
+package main
+
+import (
+	"log"
+
+	"demo/src/controller/myctl"
+	"demo/src/controller/myctl/controller"
+	"demo/src/controller/myctl/state"
 )
 
-res, err := ctl.Run()
-if err != nil {
-    log.Println(err.PanicErr, err.StateErr)
-    return nil, fmt.Errorf("error")
+func main() {
+	ctl := myctl.InitCtl(
+		&state.Ctx{},
+		controller.ControllerSettingsInput{
+			AfterInit: &controller.DefaultAfterInitHandler{
+				State: state.ExtendedState{
+					Hello: "world",
+				},
+			},
+		},
+	)
+
+	res, err := ctl.Run()
+	if err != nil {
+		log.Fatalln(err.PanicErr, err.StateErr)
+	}
+
+	log.Println(res)
 }
 ```
+and add to `Hello string` to `ExtendedState` 
+in `src/controller/myctl/state/ExtendedState.go`.
