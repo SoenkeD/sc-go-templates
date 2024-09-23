@@ -72,7 +72,7 @@ plantuml-start:
 	@if [ ! $$(docker ps -q -f name=$(PLANTUML_CONTAINER_NAME)) ]; then \
 		docker run --rm -d --name $(PLANTUML_CONTAINER_NAME) \
 			-p $(PLANTUML_PORT):8080 \
-			plantuml/plantuml-server; \
+			plantuml/plantuml-server && sleep 2; \
 	fi
 
 .PHONY: plantuml-stop
