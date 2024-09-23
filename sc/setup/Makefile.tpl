@@ -10,7 +10,7 @@ CTL_DIR=src/controller
 test: vet fmt
 	~/go/bin/ginkgo -r -cover -coverprofile=coverage.out
 
-.PHONY: run
+.PHONY: fmt vet run
 run:
 	go run main.go
 
@@ -40,7 +40,7 @@ sc-gen:
 		$(if $(wildcard $(dir)/*), sc gen --root $(PWD) --name $(notdir $(dir));))
 
 .PHONY: sc
-sc: plantuml-gen sc-gen
+sc: plantuml-gen sc-gen fmt
 
 .PHONY: export
 export:
