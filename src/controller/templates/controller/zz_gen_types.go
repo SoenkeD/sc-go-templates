@@ -1,8 +1,7 @@
 package controller
 
 import (
-	"log"
-	"time"
+	"strings"
 
 	. "github.com/SoenkeD/sc-go-templates/src/controller/templates/state"
 )
@@ -43,6 +42,27 @@ type Transition struct {
 	Type       TransitionType
 }
 
+func (tr *Transition) GetId() string {
+
+	negationStr := "false"
+	if tr.Negation {
+		negationStr = "true"
+	}
+
+	return strings.Join(
+		[]string{
+			strings.TrimSuffix(tr.Action, "Action"),
+			strings.Join(tr.ActionArgs, ","),
+			strings.TrimSuffix(tr.Guard, "Guard"),
+			strings.Join(tr.GuardArgs, ","),
+			string(tr.Type),
+			strings.ReplaceAll(strings.TrimSuffix(tr.Next, "State"), "/", "\\"),
+			negationStr,
+		},
+		"/",
+	)
+}
+
 type StateAction struct {
 	Action     string
 	ActionArgs []string
@@ -72,47 +92,19 @@ type CtlErr struct {
 
 type CtlRes struct {
 	Route []string
+	State ExtendedState
 }
 
-type ReconcilerInput struct {
-	DefaultBetweenReconcile time.Duration
-	PanicHandler            PanicHandler
-	ErrorHandler            ErrorHandler
-	AfterReconcileHandler   AfterReconcileHandler
+type AfterInitHandler interface {
+	React() *ExtendedState
 }
 
-type PanicHandler interface {
-	React(err PanicErr) (next bool)
+type DefaultAfterInitHandler struct {
+	State ExtendedState
 }
 
-type DefaultPanicHandler struct{}
-
-func (rec *DefaultPanicHandler) React(err PanicErr) (next bool) {
-	next = true
-	return
-}
-
-type ErrorHandler interface {
-	React(err CtlErr) (next bool)
-}
-
-type DefaultErrorHandler struct{}
-
-func (rec *DefaultErrorHandler) React(err CtlErr) (next bool) {
-	log.Println("INFO: An error occured\n", err)
-	next = true
-	return
-}
-
-type AfterReconcileHandler interface {
-	React(res CtlRes) (next bool)
-}
-
-type DefaultAfterReconcileHandler struct{}
-
-func (rec *DefaultAfterReconcileHandler) React(res CtlRes) (next bool) {
-	next = true
-	return
+func (rec *DefaultAfterInitHandler) React() *ExtendedState {
+	return &rec.State
 }
 
 type AfterActionHandler interface {
@@ -138,16 +130,24 @@ func (rec *DefaultAfterStateHandler) React(state ExtendedState) (next bool) {
 }
 
 type ControllerSettingsInput struct {
+	AfterInit   AfterInitHandler
 	AfterAction AfterActionHandler
 	AfterState  AfterStateHandler
 }
 
 type ControllerSettings struct {
+	AfterInit   AfterInitHandler
 	AfterAction AfterActionHandler
 	AfterState  AfterActionHandler
 }
 
 func ControllerSettingsFromInput(input ControllerSettingsInput) (set ControllerSettings) {
+
+	if input.AfterInit != nil {
+		set.AfterInit = input.AfterInit
+	} else {
+		set.AfterInit = &DefaultAfterInitHandler{}
+	}
 
 	if input.AfterAction != nil {
 		set.AfterAction = input.AfterAction

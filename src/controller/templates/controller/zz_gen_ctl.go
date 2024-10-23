@@ -24,7 +24,7 @@ type Ctl struct {
 
 func (ctl *Ctl) init() {
 	ctl.nextState = KeyStartState
-	ctl.state = new(ExtendedState)
+	ctl.state = ctl.Settings.AfterInit.React()
 	ctl.stateStack = []string{}
 	ctl.panic = nil
 }
@@ -33,9 +33,9 @@ func (ctl *Ctl) findErrorHandling() error {
 
 	// find state which caused error
 	var errorState string
-	for idx := len(ctl.state.Route); idx > 0; idx-- {
+	for idx := len(ctl.state.Route) - 1; idx >= 0; idx-- {
 
-		if !strings.HasSuffix(ctl.state.Route[idx-1], "State") {
+		if !strings.HasSuffix(ctl.state.Route[idx], "State") {
 			continue
 		}
 
@@ -63,12 +63,14 @@ func (ctl *Ctl) findErrorHandling() error {
 			return nil
 		}
 	}
+	ctl.popStateStack(1)
 
 	// check if compound states have error handling
-	for idx := len(ctl.stateStack); idx > 0; idx++ {
+	for idx := len(ctl.stateStack); idx > 0; idx-- {
 
 		startStateName := ctl.stateStack[idx-1]
 		endStateName := strings.ReplaceAll(startStateName, KeyStartState, KeyEndState)
+		ctl.state.Route = append(ctl.state.Route, endStateName)
 
 		compoundState := ctl.States[endStateName]
 		for _, ta := range compoundState.Transitions {
@@ -90,6 +92,7 @@ func (ctl *Ctl) findErrorHandling() error {
 				return nil
 			}
 		}
+		ctl.popStateStack(1)
 	}
 
 	return fmt.Errorf("cannot find any error handling")
@@ -114,6 +117,7 @@ func (ctl *Ctl) Run() (res CtlRes, err *CtlErr) {
 			ctl.state.Error = stateErr.ActionErr.Err
 			noErrHandling := ctl.findErrorHandling()
 			if noErrHandling == nil {
+				// the next state is set and can be used
 				continue
 			}
 
@@ -135,12 +139,15 @@ func (ctl *Ctl) Run() (res CtlRes, err *CtlErr) {
 				},
 				Route: ctl.state.Route,
 			}
+
+			return
 		}
 	}
 
 	ctl.state.Route = append(ctl.state.Route, KeyEndState)
 	res = CtlRes{
 		Route: ctl.state.Route,
+		State: *ctl.state,
 	}
 
 	return
@@ -157,8 +164,8 @@ func (ctl *Ctl) doTransition(transition Transition) (executed bool, err *StateEr
 		if xor(!guard.Do(ctl.state, transition.GuardArgs...), transition.Negation) {
 			return false, nil
 		}
-		ctl.state.Route = append(ctl.state.Route, transition.Guard)
 	}
+	ctl.state.Route = append(ctl.state.Route, ctl.nextState+"/"+transition.GetId())
 
 	if transition.Action != "" {
 		err := ctl.doAction(transition.Action, transition.ActionArgs)
@@ -194,6 +201,14 @@ func xor(a, b bool) bool {
 	return (a || b) && !(a && b)
 }
 
+func (ctl *Ctl) popStateStack(amount int) {
+	if len(ctl.stateStack) < amount {
+		ctl.stateStack = []string{}
+	} else {
+		ctl.stateStack = ctl.stateStack[:len(ctl.stateStack)-amount]
+	}
+}
+
 func (ctl *Ctl) doNextState() *StateErr {
 
 	ctl.state.Route = append(ctl.state.Route, ctl.nextState)
@@ -203,11 +218,7 @@ func (ctl *Ctl) doNextState() *StateErr {
 	}
 
 	if strings.HasSuffix(ctl.nextState, "EndState") {
-		if len(ctl.stateStack) < 2 {
-			ctl.stateStack = []string{}
-		} else {
-			ctl.stateStack = ctl.stateStack[:len(ctl.stateStack)-2]
-		}
+		ctl.popStateStack(2)
 	}
 
 	state := ctl.States[ctl.nextState]
@@ -239,6 +250,10 @@ func (ctl *Ctl) doNextState() *StateErr {
 	}
 
 	for _, transition := range state.Transitions {
+
+		if transition.Type == TransitionTypeError {
+			continue
+		}
 
 		executed, stateErr := ctl.doTransition(transition)
 		if !executed {

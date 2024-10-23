@@ -1,9 +1,7 @@
 package controller
 
 import (
-	"log"
 	"strings"
-	"time"
 
 	. "{{ .ImportRoot }}/state"
 )
@@ -95,47 +93,6 @@ type CtlErr struct {
 type CtlRes struct {
 	Route []string
 	State ExtendedState
-}
-
-type ReconcilerInput struct {
-	DefaultBetweenReconcile time.Duration
-	PanicHandler            PanicHandler
-	ErrorHandler            ErrorHandler
-	AfterReconcileHandler   AfterReconcileHandler
-}
-
-type PanicHandler interface {
-	React(err PanicErr) (next bool)
-}
-
-type DefaultPanicHandler struct{}
-
-func (rec *DefaultPanicHandler) React(err PanicErr) (next bool) {
-	next = true
-	return
-}
-
-type ErrorHandler interface {
-	React(err CtlErr) (next bool)
-}
-
-type DefaultErrorHandler struct{}
-
-func (rec *DefaultErrorHandler) React(err CtlErr) (next bool) {
-	log.Println("INFO: An error occured\n", err)
-	next = true
-	return
-}
-
-type AfterReconcileHandler interface {
-	React(res CtlRes) (next bool)
-}
-
-type DefaultAfterReconcileHandler struct{}
-
-func (rec *DefaultAfterReconcileHandler) React(res CtlRes) (next bool) {
-	next = true
-	return
 }
 
 type AfterInitHandler interface {

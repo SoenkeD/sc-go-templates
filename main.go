@@ -11,10 +11,11 @@ import (
 func main() {
 
 	ctl := templates.InitCtl(&state.Ctx{}, controller.ControllerSettingsInput{})
-	reconciler := controller.InitReconciler(ctl, controller.ReconcilerInput{})
 
-	err := reconciler.Reconcile()
+	res, err := ctl.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	log.Println(res)
 }

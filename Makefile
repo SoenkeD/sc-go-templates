@@ -1,3 +1,19 @@
+#############################
+#############################
+### Container 
+#############################
+#############################
+CONTAINER_RT=podman
+
+#############################
+#############################
+#############################
+#############################
+### SC Chapter
+#############################
+#############################
+#############################
+#############################
 CTL_DIR=src/controller
 
 #############################
@@ -11,8 +27,8 @@ test: vet fmt
 	~/go/bin/ginkgo -r -cover -coverprofile=coverage.out
 
 .PHONY: run
-run:
-	go run src/main.go
+run: fmt vet
+	go run main.go
 
 #############################
 #############################
@@ -37,7 +53,7 @@ sc=~/go/bin/sc
 .PHONY: sc-gen
 sc-gen:
 	$(foreach dir,$(wildcard $(CTL_DIR)/*), \
-		sc gen --root $(PWD) --name $(notdir $(dir));)
+		$(if $(wildcard $(dir)/*), $(sc) gen --root $(PWD) --name $(notdir $(dir)) --force-generated;))
 
 .PHONY: sc
 sc: plantuml-gen sc-gen fmt
@@ -57,7 +73,7 @@ PLANTUML_CONTAINER_NAME=sc-plantuml-server
 
 .PHONY: plantuml-gen
 plantuml-gen: plantuml-start $(patsubst $(CTL_DIR)/%.plantuml,$(CTL_DIR)/%.svg,$(wildcard $(CTL_DIR)/*/*.plantuml))
-$(CTL_DIR)/%.svg: src/controller/%.plantuml
+$(CTL_DIR)/%.svg: $(CTL_DIR)/%.plantuml
 	curl -X POST \
 		-H "Content-Type: text/plain" \
 		--data-binary "@$<" \
@@ -66,12 +82,12 @@ $(CTL_DIR)/%.svg: src/controller/%.plantuml
 
 .PHONY: plantuml-start
 plantuml-start:
-	@if [ ! $$(docker ps -q -f name=$(PLANTUML_CONTAINER_NAME)) ]; then \
-		docker run --rm -d --name $(PLANTUML_CONTAINER_NAME) \
+	@if [ ! $$($(CONTAINER_RT) ps -q -f name=$(PLANTUML_CONTAINER_NAME)) ]; then \
+		$(CONTAINER_RT) run --rm -d --name $(PLANTUML_CONTAINER_NAME) \
 			-p $(PLANTUML_PORT):8080 \
-			plantuml/plantuml-server; \
+			plantuml/plantuml-server && sleep 2; \
 	fi
 
 .PHONY: plantuml-stop
 plantuml-stop:
-	docker stop $(PLANTUML_CONTAINER_NAME)
+	$(CONTAINER_RT) stop $(PLANTUML_CONTAINER_NAME)
