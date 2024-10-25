@@ -12,7 +12,7 @@ Ensure `~/go/bin` is in your path.
 <div style="border-left: 5px solid #007bff; padding: 10px; margin: 20px 0;">
     <strong style="color: #007bff;">ℹ️ Requirements</strong>
     <p style="margin: 5px 0 0 0;">
-        A container runtime such as Docker is required.
+        A container runtime such as Docker or Podman is required.
     </p>
 	<p style="margin: 5px 0 0 0;">
         Install <a href="https://onsi.github.io/ginkgo/">Ginkgo</a> to execute the tests
