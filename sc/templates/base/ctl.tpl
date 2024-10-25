@@ -153,6 +153,21 @@ func (ctl *Ctl) Run() (res CtlRes, err *CtlErr) {
 	return
 }
 
+func (ctl *Ctl) doGuard(guard Guard, negation bool, args ...string) (denied bool) {
+
+	defer func() {
+		if err := recover(); err != nil {
+			ctl.panic = &PanicErr{
+				Err:        fmt.Sprintf("%s", err),
+				Route:      ctl.state.Route,
+				StackTrace: getStackTrace(3),
+			}
+		}
+	}()
+
+	return xor(!guard.Do(ctl.state, args...), negation)
+}
+
 func (ctl *Ctl) doTransition(transition Transition) (executed bool, err *StateErr) {
 
 	if transition.Type == TransitionTypeHappy && transition.Guard != "" {
@@ -161,7 +176,7 @@ func (ctl *Ctl) doTransition(transition Transition) (executed bool, err *StateEr
 
 	if transition.Guard != "" {
 		guard := ctl.Guards[transition.Guard]
-		if xor(!guard.Do(ctl.state, transition.GuardArgs...), transition.Negation) {
+		if ctl.doGuard(guard, transition.Negation, transition.GuardArgs...) {
 			return false, nil
 		}
 	}
