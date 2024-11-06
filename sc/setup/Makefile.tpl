@@ -1,4 +1,5 @@
 CTL_DIR=src/controller
+CONTAINER_ENGINE=docker
 
 #############################
 #############################
@@ -8,10 +9,10 @@ CTL_DIR=src/controller
 
 .PHONY: test
 test: vet fmt
-	~/go/bin/ginkgo -r -cover -coverprofile=coverage.out
+	~/go/bin/ginkgo -r
 
-.PHONY: fmt vet run
-run:
+.PHONY: run
+run: vet fmt
 	go run main.go
 
 #############################
@@ -34,10 +35,19 @@ vet:
 #############################
 #############################
 sc=~/go/bin/sc
+
+.PHONY: force-generated
+force-generated:
+	$(eval SC_OPT=$(SC_OPT) --force-generated)
+
+.PHONY: clear
+clear:
+	$(eval SC_OPT=$(SC_OPT) --clear)
+
 .PHONY: sc-gen
 sc-gen:
 	$(foreach dir,$(wildcard $(CTL_DIR)/*), \
-		$(if $(wildcard $(dir)/*), $(sc) gen --root $(PWD) --name $(notdir $(dir));))
+		$(if $(wildcard $(dir)/*), $(sc) gen --root $(PWD) --name $(notdir $(dir)) $(SC_OPT);))
 
 .PHONY: sc
 sc: plantuml-gen sc-gen fmt
@@ -69,12 +79,20 @@ $(CTL_DIR)/%.svg: $(CTL_DIR)/%.plantuml
 
 .PHONY: plantuml-start
 plantuml-start:
-	@if [ ! $$(docker ps -q -f name=$(PLANTUML_CONTAINER_NAME)) ]; then \
-		docker run --rm -d --name $(PLANTUML_CONTAINER_NAME) \
+	@if [ ! $$($(CONTAINER_ENGINE) ps -q -f name=$(PLANTUML_CONTAINER_NAME)) ]; then \
+		$(CONTAINER_ENGINE) run --rm -d --name $(PLANTUML_CONTAINER_NAME) \
 			-p $(PLANTUML_PORT):8080 \
-			plantuml/plantuml-server && sleep 2; \
+			docker.io/plantuml/plantuml-server && sleep 2; \
 	fi
 
 .PHONY: plantuml-stop
 plantuml-stop:
-	docker stop $(PLANTUML_CONTAINER_NAME)
+	$(CONTAINER_ENGINE) stop $(PLANTUML_CONTAINER_NAME)
+
+.PHONY: plantuml-one
+plantuml-one: plantuml-start
+	curl -X POST \
+		-H "Content-Type: text/plain" \
+		--data-binary "@$(puml)" \
+		http://localhost:$(PLANTUML_PORT)/svg \
+		> $(output)
