@@ -1,0 +1,11 @@
+language: "go"
+EnableGeneratedFilePrefix: true
+importPathSeparator: "/"
+ctlDir: "internal/scctl"
+imports:
+- repoOwner: "SoenkeD"
+  repoName: "sc-go-templates"
+  repoPath: "sc/templates/"
+  localPath: "sc/templates/"
+templates:
+  - dir: "sc/templates"
