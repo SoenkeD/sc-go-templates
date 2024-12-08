@@ -3,8 +3,5 @@ defaultPlantUml: "uml.tpl"
 integratedSetup:
 - "go mod init {{ .Cfg.Module }}" 
 - "/bin/bash -c $KUBEBUILDER init --domain $DOMAIN --repo {{ .Cfg.Module }}"
-afterStructureCreation:
-- "go get github.com/onsi/gomega/..."
-- "go get github.com/onsi/ginkgo/v2"
 afterAll:
 - "go mod tidy"
